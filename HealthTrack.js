@@ -107,6 +107,25 @@ function fmt(n) {
   return cents > 0 ? `${intStr},${String(cents).padStart(2, "0")}` : intStr;
 }
 
+// Render "<big number> <unit>" on one line, unit styled smaller beside the digits.
+function unitBeside(parent, numText, unitText, numSize, center, accent) {
+  const row = parent.addStack();
+  row.layoutHorizontally();
+  row.centerAlignContent();
+  if (center) row.addSpacer();
+  const num = row.addText(numText);
+  num.font = Font.heavyRoundedSystemFont(numSize);
+  num.textColor = MAIN_C;
+  if (unitText) {
+    row.addSpacer(5);
+    const uni = row.addText(unitText);
+    uni.font = Font.semiboldSystemFont(Math.max(9, Math.round(numSize * 0.4)));
+    uni.textColor = accent;
+  }
+  if (center) row.addSpacer();
+  return row;
+}
+
 async function fetchData() {
   const rows = csvToRows(await loadCsv());
   if (rows.length === 0) throw new Error("Ingen rækker i arket");
@@ -174,13 +193,9 @@ async function compose(data) {
 
   if (fam === "small") {
     mainStack.addSpacer();
-    const size = kcalStr.length <= 4 ? 28 : kcalStr.length <= 6 ? 22 : kcalStr.length <= 8 ? 17 : 13;
-    const t = mainStack.addText(kcalStr);
-    t.font = Font.heavyRoundedSystemFont(size);
-    t.textColor = MAIN_C;
-    t.centerAlignText();
-    const l = mainStack.addText("kcal forbrændt");
-    l.font = Font.mediumSystemFont(9);
+    unitBeside(mainStack, kcalStr, "kcal", 26, true, ACCENT_C);
+    const l = mainStack.addText("forbrændt i dag");
+    l.font = Font.mediumSystemFont(8);
     l.textColor = ACCENT_C;
     l.centerAlignText();
     const m = mainStack.addText(minStr > 0 ? `motion: ${minStr} min` : `${MONTHS[now.getMonth()]}: ${fmt(data.month.kcal)}`);
@@ -198,12 +213,9 @@ async function compose(data) {
     body.addSpacer();
     const left = body.addStack();
     left.layoutVertically();
-    const size = kcalStr.length <= 5 ? 38 : kcalStr.length <= 7 ? 30 : 22;
-    const t = left.addText(kcalStr);
-    t.font = Font.heavyRoundedSystemFont(size);
-    t.textColor = MAIN_C;
-    const l = left.addText("kcal forbrændt i dag");
-    l.font = Font.mediumSystemFont(10);
+    unitBeside(left, kcalStr, "kcal", 34, false, ACCENT_C);
+    const l = left.addText("forbrændt i dag");
+    l.font = Font.mediumSystemFont(9);
     l.textColor = ACCENT_C;
     body.addSpacer();
     const right = body.addStack();
@@ -245,11 +257,8 @@ async function compose(data) {
     mo.font = Font.mediumSystemFont(11);
     mo.textColor = MUTED_C;
     mainStack.addSpacer(8);
-    const size = kcalStr.length <= 5 ? 46 : kcalStr.length <= 7 ? 36 : 26;
-    const t = mainStack.addText(kcalStr);
-    t.font = Font.heavyRoundedSystemFont(size);
-    t.textColor = MAIN_C;
-    const l = mainStack.addText("kcal forbrændt i dag");
+    unitBeside(mainStack, kcalStr, "kcal", 42, false, ACCENT_C);
+    const l = mainStack.addText("forbrændt i dag");
     l.font = Font.mediumSystemFont(12);
     l.textColor = ACCENT_C;
     mainStack.addSpacer(12);

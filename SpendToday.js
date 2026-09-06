@@ -178,6 +178,26 @@ async function fetchData() {
 
 function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
 
+// Render "<big number> <unit>" on one line, unit styled smaller beside the digits.
+// center=true -> horizontally centered (small/medium); false -> left aligned (large).
+function unitBeside(parent, numText, unitText, numSize, center, accent) {
+  const row = parent.addStack();
+  row.layoutHorizontally();
+  row.centerAlignContent();
+  if (center) row.addSpacer();
+  const num = row.addText(numText);
+  num.font = Font.heavyRoundedSystemFont(numSize);
+  num.textColor = MAIN_C;
+  if (unitText) {
+    row.addSpacer(5);
+    const uni = row.addText(unitText);
+    uni.font = Font.semiboldSystemFont(Math.max(9, Math.round(numSize * 0.4)));
+    uni.textColor = accent;
+  }
+  if (center) row.addSpacer();
+  return row;
+}
+
 async function compose(data) {
   const w = new ListWidget();
   w.setPadding(14, 16, 14, 16);
@@ -212,12 +232,9 @@ async function compose(data) {
 
   if (fam === "small") {
     mainStack.addSpacer();
-    const amt = mainStack.addText(fmtAmount(spent));
-    amt.font = Font.heavyRoundedSystemFont(30);
-    amt.textColor = MAIN_C;
-    amt.centerAlignText();
-    const lab = mainStack.addText("brugt i dag");
-    lab.font = Font.mediumSystemFont(10);
+    unitBeside(mainStack, fmtAmount(spent), "kr", 28, true, ACCENT_C);
+    const lab = mainStack.addText("i dag");
+    lab.font = Font.mediumSystemFont(9);
     lab.textColor = ACCENT_C;
     lab.centerAlignText();
     mainStack.addSpacer(2);
@@ -231,17 +248,7 @@ async function compose(data) {
     d.font = Font.mediumSystemFont(11);
     d.textColor = MUTED_C;
     mainStack.addSpacer(6);
-    const row = mainStack.addStack();
-    row.layoutHorizontally();
-    row.addSpacer();
-    const amt = row.addText(fmtAmount(spent));
-    amt.font = Font.heavyRoundedSystemFont(36);
-    amt.textColor = MAIN_C;
-    row.addSpacer(6);
-    const unit = row.addText("kr");
-    unit.font = Font.mediumSystemFont(15);
-    unit.textColor = ACCENT_C;
-    row.addSpacer();
+    unitBeside(mainStack, fmtAmount(spent), "kr", 36, true, ACCENT_C);
     mainStack.addSpacer(4);
     const sub = mainStack.addStack();
     sub.layoutHorizontally();
@@ -262,10 +269,8 @@ async function compose(data) {
     mo.font = Font.mediumSystemFont(11);
     mo.textColor = MUTED_C;
     mainStack.addSpacer(10);
-    const amt = mainStack.addText(`${fmtAmount(spent)} kr`);
-    amt.font = Font.heavyRoundedSystemFont(44);
-    amt.textColor = MAIN_C;
-    const lab = mainStack.addText("brugt i dag");
+    unitBeside(mainStack, fmtAmount(spent), "kr", 44, false, ACCENT_C);
+    const lab = mainStack.addText("i dag");
     lab.font = Font.mediumSystemFont(12);
     lab.textColor = ACCENT_C;
     mainStack.addSpacer(10);
