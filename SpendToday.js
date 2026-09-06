@@ -232,31 +232,25 @@ async function compose(data) {
 
   if (fam === "small") {
     mainStack.addSpacer();
-    unitBeside(mainStack, fmtAmount(spent), "kr", 28, true, ACCENT_C);
+    unitBeside(mainStack, fmtAmount(spent), "kr", 28, false, ACCENT_C);
     const lab = mainStack.addText("i dag");
     lab.font = Font.mediumSystemFont(9);
     lab.textColor = ACCENT_C;
-    lab.centerAlignText();
     mainStack.addSpacer(2);
     const mo = mainStack.addText(`${MONTHS[now.getMonth()]} ${fmtAmount(data.month.spent)} kr`);
     mo.font = Font.regularSystemFont(9);
     mo.textColor = MUTED_C;
-    mo.centerAlignText();
     mainStack.addSpacer();
   } else if (fam === "medium") {
     const d = mainStack.addText(dateLabel.toUpperCase());
     d.font = Font.mediumSystemFont(11);
     d.textColor = MUTED_C;
     mainStack.addSpacer(6);
-    unitBeside(mainStack, fmtAmount(spent), "kr", 36, true, ACCENT_C);
+    unitBeside(mainStack, fmtAmount(spent), "kr", 36, false, ACCENT_C);
     mainStack.addSpacer(4);
-    const sub = mainStack.addStack();
-    sub.layoutHorizontally();
-    sub.addSpacer();
-    const info = sub.addText(`${data.today.cnt} køb i dag · ${MONTHS[now.getMonth()]}: ${fmtAmount(data.month.spent)} kr`);
+    const info = mainStack.addText(`${data.today.cnt} køb i dag · ${MONTHS[now.getMonth()]}: ${fmtAmount(data.month.spent)} kr`);
     info.font = Font.regularSystemFont(11);
     info.textColor = MUTED_C;
-    sub.addSpacer();
     mainStack.addSpacer();
   } else { // large
     const head = mainStack.addStack();

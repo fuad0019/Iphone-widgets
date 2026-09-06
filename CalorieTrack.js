@@ -239,15 +239,13 @@ async function compose(data) {
 
   if (fam === "small") {
     mainStack.addSpacer();
-    unitBeside(mainStack, kcalStr, "kcal", 26, true, ACCENT_C);
+    unitBeside(mainStack, kcalStr, "kcal", 26, false, ACCENT_C);
     const l = mainStack.addText("i dag");
     l.font = Font.mediumSystemFont(9);
     l.textColor = ACCENT_C;
-    l.centerAlignText();
     const m = mainStack.addText(`P ${fmt(data.today.p)} · C ${fmt(data.today.c)} · F ${fmt(data.today.f)}`);
     m.font = Font.regularSystemFont(8);
     m.textColor = MUTED_C;
-    m.centerAlignText();
     mainStack.addSpacer();
   } else if (fam === "medium") {
     const d = mainStack.addText(`${WEEKDAYS[now.getDay()]} · ${now.getDate()}. ${MONTHS[now.getMonth()]}`.toUpperCase());
