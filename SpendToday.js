@@ -232,12 +232,12 @@ async function compose(data) {
 
   if (fam === "small") {
     mainStack.addSpacer();
-    unitBeside(mainStack, fmtAmount(spent), "kr", 28, false, ACCENT_C);
+    unitBeside(mainStack, fmtAmount(spent), "kr.", 28, false, ACCENT_C);
     const lab = mainStack.addText("i dag");
     lab.font = Font.mediumSystemFont(9);
     lab.textColor = ACCENT_C;
     mainStack.addSpacer(2);
-    const mo = mainStack.addText(`${MONTHS[now.getMonth()]} ${fmtAmount(data.month.spent)} kr`);
+    const mo = mainStack.addText(`${MONTHS[now.getMonth()]} ${fmtAmount(data.month.spent)} kr.`);
     mo.font = Font.regularSystemFont(9);
     mo.textColor = MUTED_C;
     mainStack.addSpacer();
@@ -246,9 +246,9 @@ async function compose(data) {
     d.font = Font.mediumSystemFont(11);
     d.textColor = MUTED_C;
     mainStack.addSpacer(6);
-    unitBeside(mainStack, fmtAmount(spent), "kr", 36, false, ACCENT_C);
+    unitBeside(mainStack, fmtAmount(spent), "kr.", 36, false, ACCENT_C);
     mainStack.addSpacer(4);
-    const info = mainStack.addText(`${data.today.cnt} køb i dag · ${MONTHS[now.getMonth()]}: ${fmtAmount(data.month.spent)} kr`);
+    const info = mainStack.addText(`${data.today.cnt} køb i dag · ${MONTHS[now.getMonth()]}: ${fmtAmount(data.month.spent)} kr.`);
     info.font = Font.regularSystemFont(11);
     info.textColor = MUTED_C;
     mainStack.addSpacer();
@@ -263,7 +263,7 @@ async function compose(data) {
     mo.font = Font.mediumSystemFont(11);
     mo.textColor = MUTED_C;
     mainStack.addSpacer(10);
-    unitBeside(mainStack, fmtAmount(spent), "kr", 44, false, ACCENT_C);
+    unitBeside(mainStack, fmtAmount(spent), "kr.", 44, false, ACCENT_C);
     const lab = mainStack.addText("i dag");
     lab.font = Font.mediumSystemFont(12);
     lab.textColor = ACCENT_C;
@@ -283,7 +283,7 @@ async function compose(data) {
         dd.textColor = MUTED_C;
         dd.lineLimit = 1;
         rr.addSpacer();
-        const aa = rr.addText(`${fmtAmount(r.amt)} kr`);
+        const aa = rr.addText(`${fmtAmount(r.amt)} kr.`);
         aa.font = Font.semiboldSystemFont(12);
         aa.textColor = MAIN_C;
         mainStack.addSpacer(6);
@@ -317,13 +317,13 @@ function composeAccessory(data, fam) {
     t.font = Font.heavyRoundedSystemFont(size);
     t.textColor = MAIN_C;
     t.centerAlignText();
-    const u = st.addText("kr i dag");
+    const u = st.addText("kr. i dag");
     u.font = Font.mediumSystemFont(8);
     u.textColor = ACCENT_C;
     u.centerAlignText();
     st.addSpacer();
   } else if (fam === "accessoryRectangular") {
-    const l1 = w.addText(`${spentStr} kr`);
+    const l1 = w.addText(`${spentStr} kr.`);
     l1.font = Font.semiboldSystemFont(16);
     l1.textColor = MAIN_C;
     l1.lineLimit = 1;
@@ -331,13 +331,13 @@ function composeAccessory(data, fam) {
     l2.font = Font.regularSystemFont(10);
     l2.textColor = MUTED_C;
     l2.lineLimit = 1;
-    const l3 = w.addText(`${MONTHS[now.getMonth()]}: ${monthStr} kr`);
+    const l3 = w.addText(`${MONTHS[now.getMonth()]}: ${monthStr} kr.`);
     l3.font = Font.mediumSystemFont(10);
     l3.textColor = ACCENT_C;
     l3.lineLimit = 1;
   } else {
     // accessoryInline — single short line next to the clock
-    const t = w.addText(`🛍  ${spentStr} kr i dag · ${monthStr} kr/måned`);
+    const t = w.addText(`🛍  ${spentStr} kr. i dag · ${monthStr} kr./måned`);
     t.font = Font.mediumSystemFont(12);
     t.textColor = MAIN_C;
     t.lineLimit = 1;
