@@ -15,7 +15,7 @@
 //   protein, carbs (kulhydrat/karbohydrat), fat (fedt), optional description.
 
 // ---------- CONFIG ----------
-const CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE"; // e.g. .../spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
+const CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE";
 const HAS_HEADER = true;
 const DATE_DDMM = true;            // Danish dd/mm dates; ISO yyyy-mm-dd also supported
 const REFRESH_MINUTES = 15;        // widget refresh cadence (iOS decides the exact time)

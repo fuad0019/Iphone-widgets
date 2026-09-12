@@ -21,7 +21,7 @@
 //     Without it the widget falls back to a dark glass card.
 
 // ---------- CONFIG ----------
-const CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE"; // e.g. .../spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
+const CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE";
 // If you publish to web instead, replace the line above with the .../pub?...&output=csv URL.
 
 const HAS_HEADER = true;        // first row is a header row

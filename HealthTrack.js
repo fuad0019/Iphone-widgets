@@ -11,7 +11,7 @@
 // (kcal/calories/active energy/forbrændt), optional exercise minutes.
 
 // ---------- CONFIG ----------
-const CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE"; // e.g. .../spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
+const CSV_URL = "PASTE_YOUR_PUBLISHED_CSV_URL_HERE";
 const HAS_HEADER = true;
 const DATE_DDMM = true;
 const REFRESH_MINUTES = 15;
