@@ -5,7 +5,7 @@
 //  1) Make the sheet readable:
 //     A) RECOMMENDED: Google Sheets -> File -> Share -> "Publish to web" ->
 //        Tab: "September 2026", Format: "Comma-separated values (.csv)" ->
-//        Publish -> copy the URL (looks like .../pub?gid=YOUR_SHEET_ID&single=true&output=csv)
+//        Publish -> copy the URL (looks like .../pub?gid=YOUR_SHORTCUT_NAME&single=true&output=csv)
 //        and paste it into CSV_URL below. Only that tab is exposed.
 //     B) Alternative: Share -> "Anyone with the link" -> Viewer. Then the
 //        /export URL below already works (no publish needed), but the whole

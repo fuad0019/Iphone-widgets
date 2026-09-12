@@ -21,6 +21,7 @@ const DATE_DDMM = true;            // Danish dd/mm dates; ISO yyyy-mm-dd also su
 const REFRESH_MINUTES = 15;        // widget refresh cadence (iOS decides the exact time)
 const TRANSPARENT = true;
 const FALLBACK = { date: 0, kcal: 1, protein: 2, carbs: 3, fat: 4 };
+const TAP_SHORTCUT = ""; // optional: name of an iOS Shortcut to run when the widget is tapped
 // ---------- END CONFIG ----------
 
 const WEEKDAYS = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
@@ -183,6 +184,12 @@ async function fetchData() {
   return { today, month, todayRows, hasDesc: cols.desc >= 0 };
 }
 
+// Tap action: widgets can't run code on tap, but they can open a URL -- this
+// makes a tap launch the configured iOS Shortcut (here: the barcode scanner).
+function applyTapShortcut(w) {
+  if (TAP_SHORTCUT) w.url = "shortcuts://run-shortcut?name=" + encodeURIComponent(TAP_SHORTCUT);
+}
+
 async function compose(data) {
   const w = new ListWidget();
   w.setPadding(14, 16, 14, 16);
@@ -309,6 +316,7 @@ async function compose(data) {
     mainStack.addSpacer();
   }
 
+  applyTapShortcut(w);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }
@@ -350,6 +358,7 @@ function composeAccessory(data, fam) {
     t.textColor = MAIN_C;
     t.lineLimit = 1;
   }
+  applyTapShortcut(w);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }
