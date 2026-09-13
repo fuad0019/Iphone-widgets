@@ -41,7 +41,7 @@ const TAP_SHORTCUT = "";   // run on tap when TAP_MODE allows ("" = none)
 // single-vs-double tap distinction (Scriptable has no interactive widgets).
 // Pick ONE: "auto" (shortcut if set, else refresh) | "shortcut" | "refresh"
 //           | "sheet" (open SHEET_URL) | "none"
-const TAP_MODE = "sheet";
+const TAP_MODE = "auto";
 const SCRIPT_NAME = "";   // leave empty to use this file's name (SpendToday)
 // ---------- END CONFIG ----------
 
