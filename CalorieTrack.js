@@ -21,7 +21,14 @@ const DATE_DDMM = true;            // Danish dd/mm dates; ISO yyyy-mm-dd also su
 const REFRESH_MINUTES = 15;        // widget refresh cadence (iOS decides the exact time)
 const TRANSPARENT = true;
 const FALLBACK = { date: 0, kcal: 1, protein: 2, carbs: 3, fat: 4 };
-const TAP_SHORTCUT = ""; // optional: name of an iOS Shortcut to run when the widget is tapped
+const TAP_SHORTCUT = "";   // run on tap when TAP_MODE allows ("" = none)
+// Tap behaviour -------------------------------------------------------------
+// iOS widgets cannot detect taps: a tap opens exactly ONE url and there is no
+// single-vs-double tap distinction (Scriptable has no interactive widgets).
+// Pick ONE: "auto" (shortcut if set, else refresh) | "shortcut" | "refresh"
+//           | "sheet" (open SHEET_URL) | "none"
+const TAP_MODE = "auto";
+const SCRIPT_NAME = "";   // leave empty to use this file's name (CalorieTrack)
 // ---------- END CONFIG ----------
 
 const WEEKDAYS = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
@@ -186,8 +193,24 @@ async function fetchData() {
 
 // Tap action: widgets can't run code on tap, but they can open a URL -- this
 // makes a tap launch the configured iOS Shortcut (here: the barcode scanner).
-function applyTapShortcut(w) {
-  if (TAP_SHORTCUT) w.url = "shortcuts://run-shortcut?name=" + encodeURIComponent(TAP_SHORTCUT);
+// --- tap handling ----------------------------------------------------------
+function scriptName() {
+  if (typeof SCRIPT_NAME === "string" && SCRIPT_NAME) return SCRIPT_NAME;
+  const base = String(module.filename || "").replace(/^.*[\/\\]/, "");
+  return base.replace(/\.js$/i, "") || "CalorieTrack";
+}
+
+function applyTap(w, sheetUrl) {
+  const mode = String(typeof TAP_MODE === "string" ? TAP_MODE : "auto").toLowerCase();
+  if (mode === "none") return;
+  if (mode === "sheet" && sheetUrl) { w.url = sheetUrl; return; }
+  if ((mode === "auto" || mode === "shortcut") && TAP_SHORTCUT) {
+    w.url = "shortcuts://run-shortcut?name=" + encodeURIComponent(TAP_SHORTCUT);
+    return;
+  }
+  if (mode === "refresh" || mode === "auto" || mode === "shortcut") {
+    w.url = "scriptable:///run/" + encodeURIComponent(scriptName());
+  }
 }
 
 async function compose(data) {
@@ -316,7 +339,7 @@ async function compose(data) {
     mainStack.addSpacer();
   }
 
-  applyTapShortcut(w);
+  applyTap(w);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }
@@ -358,7 +381,7 @@ function composeAccessory(data, fam) {
     t.textColor = MAIN_C;
     t.lineLimit = 1;
   }
-  applyTapShortcut(w);
+  applyTap(w);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }

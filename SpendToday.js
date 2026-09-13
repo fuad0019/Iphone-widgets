@@ -5,7 +5,7 @@
 //  1) Make the sheet readable:
 //     A) RECOMMENDED: Google Sheets -> File -> Share -> "Publish to web" ->
 //        Tab: "September 2026", Format: "Comma-separated values (.csv)" ->
-//        Publish -> copy the URL (looks like .../pub?gid=YOUR_SHORTCUT_NAME&single=true&output=csv)
+//        Publish -> copy the URL (looks like .../pub?gid=0&single=true&output=csv)
 //        and paste it into CSV_URL below. Only that tab is exposed.
 //     B) Alternative: Share -> "Anyone with the link" -> Viewer. Then the
 //        /export URL below already works (no publish needed), but the whole
@@ -34,6 +34,15 @@ const TRANSPARENT = true;       // use transparent-*.png when present (fallback:
 // fine-tune the look
 const ACCENT = "#34d399";       // emerald — money accent
 const TEXT_MAIN = "#ffffff";
+const SHEET_URL = "PASTE_YOUR_SPREADSHEET_URL_HERE";
+const TAP_SHORTCUT = "";   // run on tap when TAP_MODE allows ("" = none)
+// Tap behaviour -------------------------------------------------------------
+// iOS widgets cannot detect taps: a tap opens exactly ONE url and there is no
+// single-vs-double tap distinction (Scriptable has no interactive widgets).
+// Pick ONE: "auto" (shortcut if set, else refresh) | "shortcut" | "refresh"
+//           | "sheet" (open SHEET_URL) | "none"
+const TAP_MODE = "sheet";
+const SCRIPT_NAME = "";   // leave empty to use this file's name (SpendToday)
 // ---------- END CONFIG ----------
 
 const WEEKDAYS = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
@@ -198,6 +207,26 @@ function unitBeside(parent, numText, unitText, numSize, center, accent) {
   return row;
 }
 
+// --- tap handling ----------------------------------------------------------
+function scriptName() {
+  if (typeof SCRIPT_NAME === "string" && SCRIPT_NAME) return SCRIPT_NAME;
+  const base = String(module.filename || "").replace(/^.*[\/\\]/, "");
+  return base.replace(/\.js$/i, "") || "SpendToday";
+}
+
+function applyTap(w, sheetUrl) {
+  const mode = String(typeof TAP_MODE === "string" ? TAP_MODE : "auto").toLowerCase();
+  if (mode === "none") return;
+  if (mode === "sheet" && sheetUrl) { w.url = sheetUrl; return; }
+  if ((mode === "auto" || mode === "shortcut") && TAP_SHORTCUT) {
+    w.url = "shortcuts://run-shortcut?name=" + encodeURIComponent(TAP_SHORTCUT);
+    return;
+  }
+  if (mode === "refresh" || mode === "auto" || mode === "shortcut") {
+    w.url = "scriptable:///run/" + encodeURIComponent(scriptName());
+  }
+}
+
 async function compose(data) {
   const w = new ListWidget();
   w.setPadding(14, 16, 14, 16);
@@ -296,6 +325,7 @@ async function compose(data) {
     mainStack.addSpacer();
   }
 
+  applyTap(w, SHEET_URL);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }
@@ -342,6 +372,7 @@ function composeAccessory(data, fam) {
     t.textColor = MAIN_C;
     t.lineLimit = 1;
   }
+  applyTap(w, SHEET_URL);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }

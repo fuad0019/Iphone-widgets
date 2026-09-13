@@ -17,6 +17,14 @@ const DATE_DDMM = true;
 const REFRESH_MINUTES = 15;
 const TRANSPARENT = true;
 const FALLBACK = { date: 0, kcal: 1, min: 2 };
+const TAP_SHORTCUT = "";   // run on tap when TAP_MODE allows ("" = none)
+// Tap behaviour -------------------------------------------------------------
+// iOS widgets cannot detect taps: a tap opens exactly ONE url and there is no
+// single-vs-double tap distinction (Scriptable has no interactive widgets).
+// Pick ONE: "auto" (shortcut if set, else refresh) | "shortcut" | "refresh"
+//           | "sheet" (open SHEET_URL) | "none"
+const TAP_MODE = "auto";
+const SCRIPT_NAME = "";   // leave empty to use this file's name (HealthTrack)
 // ---------- END CONFIG ----------
 
 const WEEKDAYS = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
@@ -160,6 +168,26 @@ async function fetchData() {
   return { today: sum(todayList), month: sum(monthList) };
 }
 
+// --- tap handling ----------------------------------------------------------
+function scriptName() {
+  if (typeof SCRIPT_NAME === "string" && SCRIPT_NAME) return SCRIPT_NAME;
+  const base = String(module.filename || "").replace(/^.*[\/\\]/, "");
+  return base.replace(/\.js$/i, "") || "HealthTrack";
+}
+
+function applyTap(w, sheetUrl) {
+  const mode = String(typeof TAP_MODE === "string" ? TAP_MODE : "auto").toLowerCase();
+  if (mode === "none") return;
+  if (mode === "sheet" && sheetUrl) { w.url = sheetUrl; return; }
+  if ((mode === "auto" || mode === "shortcut") && TAP_SHORTCUT) {
+    w.url = "shortcuts://run-shortcut?name=" + encodeURIComponent(TAP_SHORTCUT);
+    return;
+  }
+  if (mode === "refresh" || mode === "auto" || mode === "shortcut") {
+    w.url = "scriptable:///run/" + encodeURIComponent(scriptName());
+  }
+}
+
 async function compose(data) {
   const w = new ListWidget();
   w.setPadding(14, 16, 14, 16);
@@ -271,6 +299,7 @@ async function compose(data) {
     minUnit.textColor = MUTED_C;
     mainStack.addSpacer();
   }
+  applyTap(w);
 
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
@@ -308,6 +337,7 @@ function composeAccessory(data, fam) {
     t.textColor = MAIN_C;
     t.lineLimit = 1;
   }
+  applyTap(w);
   w.refreshAfterDate = new Date(Date.now() + REFRESH_MINUTES * 60 * 1000);
   return w;
 }
