@@ -121,6 +121,14 @@ function fmt(n) {
   return cents > 0 ? `${intStr},${String(cents).padStart(2, "0")}` : intStr;
 }
 
+
+// Whole numbers only -- calories/macros round UP (e.g. 1399,2 -> 1400).
+function ceilInt(n) {
+  if (n == null) return "0";
+  const v = Math.ceil(Math.abs(n));
+  return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + "…" : s; }
 
 // Render "<big number> <unit>" on one line, unit styled smaller beside the digits.
@@ -239,7 +247,7 @@ async function compose(data) {
 
   const now = new Date();
   const kcal = data.today.kcal;
-  const kcalStr = fmt(kcal);
+  const kcalStr = ceilInt(kcal);
   const mainStack = w.addStack();
   mainStack.layoutVertically();
 
@@ -247,9 +255,9 @@ async function compose(data) {
     const row = stack.addStack();
     row.layoutHorizontally();
     const items = [
-      { label: "PROTEIN", v: fmt(data.today.p), color: P_C },
-      { label: "CARBS", v: fmt(data.today.c), color: C_C },
-      { label: "FAT", v: fmt(data.today.f), color: F_C },
+      { label: "PROTEIN", v: ceilInt(data.today.p), color: P_C },
+      { label: "CARBS", v: ceilInt(data.today.c), color: C_C },
+      { label: "FAT", v: ceilInt(data.today.f), color: F_C },
     ];
     for (const it of items) {
       row.addSpacer();
@@ -273,7 +281,7 @@ async function compose(data) {
     const l = mainStack.addText("i dag");
     l.font = Font.mediumSystemFont(9);
     l.textColor = ACCENT_C;
-    const m = mainStack.addText(`P ${fmt(data.today.p)} · C ${fmt(data.today.c)} · F ${fmt(data.today.f)}`);
+    const m = mainStack.addText(`P ${ceilInt(data.today.p)} · C ${ceilInt(data.today.c)} · F ${ceilInt(data.today.f)}`);
     m.font = Font.regularSystemFont(8);
     m.textColor = MUTED_C;
     mainStack.addSpacer();
@@ -306,7 +314,7 @@ async function compose(data) {
     d.font = Font.mediumSystemFont(13);
     d.textColor = MUTED_C;
     head.addSpacer();
-    const mo = head.addText(`${MONTHS[now.getMonth()]}: ${fmt(data.month.kcal)} kcal`);
+    const mo = head.addText(`${MONTHS[now.getMonth()]}: ${ceilInt(data.month.kcal)} kcal`);
     mo.font = Font.mediumSystemFont(11);
     mo.textColor = MUTED_C;
     mainStack.addSpacer(8);
@@ -326,7 +334,7 @@ async function compose(data) {
         dd.textColor = MUTED_C;
         dd.lineLimit = 1;
         rr.addSpacer();
-        const aa = rr.addText(`${fmt(r.kcal)} kcal`);
+        const aa = rr.addText(`${ceilInt(r.kcal)} kcal`);
         aa.font = Font.semiboldSystemFont(12);
         aa.textColor = MAIN_C;
         mainStack.addSpacer(5);
@@ -347,7 +355,7 @@ async function compose(data) {
 function composeAccessory(data, fam) {
   const w = new ListWidget();
   const now = new Date();
-  const kcalStr = fmt(data.today.kcal);
+  const kcalStr = ceilInt(data.today.kcal);
   if (fam === "accessoryCircular") {
     const size = kcalStr.length <= 4 ? 21 : kcalStr.length <= 6 ? 17 : 13;
     const st = w.addStack();
@@ -367,7 +375,7 @@ function composeAccessory(data, fam) {
     l1.font = Font.semiboldSystemFont(16);
     l1.textColor = MAIN_C;
     l1.lineLimit = 1;
-    const l2 = w.addText(`P ${fmt(data.today.p)} · C ${fmt(data.today.c)} · F ${fmt(data.today.f)}`);
+    const l2 = w.addText(`P ${ceilInt(data.today.p)} · C ${ceilInt(data.today.c)} · F ${ceilInt(data.today.f)}`);
     l2.font = Font.regularSystemFont(11);
     l2.textColor = ACCENT_C;
     l2.lineLimit = 1;
@@ -376,7 +384,7 @@ function composeAccessory(data, fam) {
     l3.textColor = MUTED_C;
     l3.lineLimit = 1;
   } else {
-    const t = w.addText(`🔥  ${kcalStr} kcal · P ${fmt(data.today.p)} C ${fmt(data.today.c)} F ${fmt(data.today.f)}`);
+    const t = w.addText(`🔥  ${kcalStr} kcal · P ${ceilInt(data.today.p)} C ${ceilInt(data.today.c)} F ${ceilInt(data.today.f)}`);
     t.font = Font.mediumSystemFont(12);
     t.textColor = MAIN_C;
     t.lineLimit = 1;
